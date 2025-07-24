@@ -385,19 +385,19 @@
 
 | Campo | Tipo | Observações |
 | --- | --- | --- |
-| id **✅** | String | PK |
-| name **✅** | VARCHAR |  |
-| description **✅** | TEXT | Nullable |
-| price **✅** | DECIMAL(10,2) |  |
-| category_id **✅** | BIGINT | FK (nullable) para `Category.id` |
-| sku **✅** | VARCHAR | UNIQUE. Código único do produto |
-| weight **✅** | DECIMAL(10,2) | Nullable |
-| dimensions **✅** | VARCHAR | Nullable. Ex: "10x15x5 cm" |
-| image_url **✅** | VARCHAR | URL de imagem (ex: S3, Cloudinary) |
-| is_active **✅**  | BOOLEAN | Ativa ou desativa a venda |
-| created_at **✅** | DATETIME |  |
-| updated_at **✅** | DATETIME |  |
-| deleted_at **✅** | DATETIME |  |
+| id | String | PK |
+| name | VARCHAR |  |
+| description | TEXT | Nullable |
+| price | DECIMAL(10,2) |  |
+| category_id | BIGINT | FK (nullable) para `Category.id` |
+| sku | VARCHAR | UNIQUE. Código único do produto |
+| weight | DECIMAL(10,2) | Nullable |
+| dimensions | VARCHAR | Nullable. Ex: "10x15x5 cm" |
+| image_url | VARCHAR | URL de imagem (ex: S3, Cloudinary) |
+| is_active  | BOOLEAN | Ativa ou desativa a venda |
+| created_at | DATETIME |  |
+| updated_at | DATETIME |  |
+| deleted_at | DATETIME |  |
 
 ### 🗂️ Entidade: `Category`
 
