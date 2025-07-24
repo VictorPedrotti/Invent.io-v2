@@ -1,6 +1,6 @@
 ---
 
-![image.png](attachment:17150ebe-98a5-4154-860c-e35d8273eebc:image.png)
+<img width="1913" height="703" alt="image" src="https://github.com/user-attachments/assets/42445e72-6d35-42b0-957d-920017c03c45" />
 
 ---
 
