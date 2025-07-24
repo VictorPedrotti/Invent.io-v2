@@ -1,0 +1,166 @@
+services:
+  keycloak-mysql:
+    container_name: keycloak-mysql
+    image: mysql:8
+    volumes:
+      - ./volume-data/mysql_keycloak_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: keycloak
+      MYSQL_USER: keycloak
+      MYSQL_PASSWORD: password
+    restart: unless-stopped
+
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:24.0.1
+    command: [ "start-dev" ]
+    environment:
+      DB_VENDOR: MYSQL
+      DB_ADDR: keycloak-mysql
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: localhost
+      KC_HTTP_PORT: 8080
+    ports:
+      - "8181:8080"
+    volumes:
+      - ./docker/keycloak/realms/:/opt/keycloak/data/import/
+    depends_on:
+      - keycloak-mysql
+    restart: unless-stopped
+
+  user-db:
+    image: mysql:latest
+    container_name: user-db
+    environment:
+      MYSQL_DATABASE: user_service_db
+      MYSQL_USER: user_service
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - user-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+  procurement-db:
+    image: mysql:latest
+    container_name: procurement-db
+    environment:
+      MYSQL_DATABASE: procurement_service_db
+      MYSQL_USER: procurement_service
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3308:3306"
+    volumes:
+      - procurement-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+  stock-db:
+    image: mysql:latest
+    container_name: stock-db
+    environment:
+      MYSQL_DATABASE: stock_service_db
+      MYSQL_USER: stock_service
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3309:3306"
+    volumes:
+      - stock-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+  order-db:
+    image: mysql:latest
+    container_name: order-db
+    environment:
+      MYSQL_DATABASE: order_service_db
+      MYSQL_USER: order_service
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3310:3306"
+    volumes:
+      - order-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+  reports-db:
+    image: mysql:latest
+    container_name: reports-db
+    environment:
+      MYSQL_DATABASE: reports_service_db
+      MYSQL_USER: reports_service
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3311:3306"
+    volumes:
+      - reports-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+  payment-db:
+    image: mysql:latest
+    container_name: payment-db
+    environment:
+      MYSQL_DATABASE: payment_service_db
+      MYSQL_USER: payment_service
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3312:3306"
+    volumes:
+      - payment-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+  notification-db:
+    image: mysql:latest
+    container_name: notification-db
+    environment:
+      MYSQL_DATABASE: notification_service_db
+      MYSQL_USER: notification_service
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3313:3306"
+    volumes:
+      - notification-db-data:/var/lib/mysql
+    restart: unless-stopped
+
+  product-mongodb:
+    image: mongo:latest
+    container_name: product-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - product-mongodb-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: product_user
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: product_service_db
+    restart: unless-stopped
+
+  cart-redis:
+    image: redis:latest 
+    container_name: cart-redis
+    ports:
+      - "6379:6379" 
+    volumes:
+      - cart-redis-data:/data 
+    restart: unless-stopped
+
+volumes:
+  keycloak-db-data:
+  user-db-data:
+  procurement-db-data:
+  stock-db-data:
+  order-db-data:
+  reports-db-data:
+  payment-db-data:
+  notification-db-data:
+  product-mongodb-data:
+  cart-redis-data: 
