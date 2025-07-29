@@ -39,7 +39,6 @@ public record ProductRequestDto(
   @NotBlank(message = "URL da imagem é obrigatória")
   String imageUrl,
 
-  @NotBlank(message = "Status ativo é obrigatório")
   boolean isActive
 ) {
 
