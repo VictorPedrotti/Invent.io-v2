@@ -23,7 +23,7 @@ public class CartService {
   }
 
   public void clearCart(String userId) {
-    cartRepository.deleteByUserId(userId);
+    cartRepository.deleteById(userId);
   }
 
   public Cart addItemToCart(String userId, CartItem newItem) {

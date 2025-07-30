@@ -10,8 +10,6 @@ public interface CartRepository extends CrudRepository<Cart, String> {
   
   Optional<Cart> findByUserId(String userId);
   
-  void deleteByUserId(String userId);
-  
   boolean existsByUserId(String userId);
 
 }

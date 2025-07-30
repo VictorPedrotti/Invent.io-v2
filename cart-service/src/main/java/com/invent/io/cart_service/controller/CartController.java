@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,25 +19,25 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/carts")
 @RequiredArgsConstructor
 public class CartController {
-  
+
   private final CartService cartService;
 
   @GetMapping
-  public ResponseEntity<Cart> getCart(String userId) {
+  public ResponseEntity<Cart> getCart(@RequestHeader("X-User-Id") String userId) {
     return cartService.getCartByUserId(userId)
         .map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
 
   @PostMapping("/add")
-    public ResponseEntity<Cart> addItem(String userId, @RequestBody CartItem item) {
-        Cart cart = cartService.addItemToCart(userId, item);
-        return ResponseEntity.ok(cart);
-    }
+  public ResponseEntity<Cart> addItem(@RequestHeader("X-User-Id") String userId, @RequestBody CartItem item) {
+    Cart cart = cartService.addItemToCart(userId, item);
+    return ResponseEntity.ok(cart);
+  }
 
-    @DeleteMapping("/clear")
-    public ResponseEntity<Void> clearCart(String userId) {
-        cartService.clearCart(userId);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/clear")
+  public ResponseEntity<Void> clearCart(@RequestHeader("X-User-Id") String userId) {
+    cartService.clearCart(userId);
+    return ResponseEntity.noContent().build();
+  }
 }
