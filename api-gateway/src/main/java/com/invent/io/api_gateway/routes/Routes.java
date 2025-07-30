@@ -17,11 +17,21 @@ public class Routes {
   @Value("${product.service.url}")
   private String productServiceUrl;
 
+  @Value("${cart.service.url}")
+  private String cartServiceUrl;
+
   @Bean
   public RouterFunction<ServerResponse> productServiceRoute() {
     return GatewayRouterFunctions.route("product_service")
               .route(RequestPredicates.path("/api/v1/products/**"), HandlerFunctions.http(URI.create(productServiceUrl)))
               .route(RequestPredicates.path("/api/v1/categories/**"), HandlerFunctions.http(URI.create(productServiceUrl)))
+              .build();
+  }
+
+  @Bean
+  public RouterFunction<ServerResponse> cartServiceRoute() {
+    return GatewayRouterFunctions.route("cart_service")
+              .route(RequestPredicates.path("/api/v1/carts/**"), HandlerFunctions.http(URI.create(cartServiceUrl)))
               .build();
   }
 
