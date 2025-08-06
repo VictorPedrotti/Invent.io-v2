@@ -13,7 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CartItem {
   
-  private String productId; 
+  private String productId;
+  private String skuCode; 
   private String name; 
   private int quantity; 
   private BigDecimal price; 
