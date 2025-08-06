@@ -23,8 +23,8 @@ public class Stock {
   private Long id;
 
   private String skuCode;
-  private Integer quantity_total;
-  private Integer quantity_available;
-  private Integer quantity_reserved;
+  private Integer quantityTotal;
+  private Integer quantityAvailable;
+  private Integer quantityReserved;
 
 }

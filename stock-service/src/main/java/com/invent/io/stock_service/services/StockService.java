@@ -20,27 +20,31 @@ public class StockService {
     private final StockMovementRepository stockMovementRepository;
 
     //* Adiciona estoque para um produto específico
-    public void addStock(String skuCode, int quantity, String description) {
+    public Stock addStock(String skuCode, int quantity) {
         Stock stock = stockRepository.findBySkuCode(skuCode)
                 .orElseGet(() -> new Stock(null, skuCode, 0, 0, 0));
 
-        stock.setQuantity_total(stock.getQuantity_total() + quantity);
-        stock.setQuantity_available(stock.getQuantity_available() + quantity);
+        stock.setQuantityTotal(stock.getQuantityTotal() + quantity);
+        stock.setQuantityAvailable(stock.getQuantityAvailable() + quantity);
 
-        stockRepository.save(stock);
-        recordMovement(skuCode, MovementType.IN, quantity, description);
+        Stock stockSaved = stockRepository.save(stock);
+        recordMovement(skuCode, MovementType.IN, quantity, "Entrada de estoque");
+
+        return stockSaved;
     }
 
     //* Remove estoque para um produto específico
-    public void decrementStock(String skuCode, int quantity) {
+    public Stock decrementStock(String skuCode, int quantity) {
         Stock stock = getStockOrThrow(skuCode);
-        validateQuantity(stock.getQuantity_available(), quantity, skuCode, "disponível");
+        validateQuantity(stock.getQuantityAvailable(), quantity, skuCode, "disponível");
 
-        stock.setQuantity_available(stock.getQuantity_available() - quantity);
-        stock.setQuantity_total(stock.getQuantity_total() - quantity);
+        stock.setQuantityAvailable(stock.getQuantityAvailable() - quantity);
+        stock.setQuantityTotal(stock.getQuantityTotal() - quantity);
 
-        stockRepository.save(stock);
+        Stock newStock = stockRepository.save(stock);
         recordMovement(skuCode, MovementType.OUT, quantity, "Saída de estoque");
+
+        return newStock;
     }
 
     //* Valida se existe estoque disponível para um produto específico
@@ -49,27 +53,31 @@ public class StockService {
     }
 
     //* Reserva estoque para um produto específico
-    public void reserveStock(String skuCode, int quantity) {
+    public Stock reserveStock(String skuCode, int quantity) {
         Stock stock = getStockOrThrow(skuCode);
-        validateQuantity(stock.getQuantity_available(), quantity, skuCode, "disponível");
+        validateQuantity(stock.getQuantityAvailable(), quantity, skuCode, "disponível");
 
-        stock.setQuantity_available(stock.getQuantity_available() - quantity);
-        stock.setQuantity_reserved(stock.getQuantity_reserved() + quantity);
+        stock.setQuantityAvailable(stock.getQuantityAvailable() - quantity);
+        stock.setQuantityReserved(stock.getQuantityReserved() + quantity);
 
-        stockRepository.save(stock);
+        Stock newStock = stockRepository.save(stock);
         recordMovement(skuCode, MovementType.RESERVED, quantity, "Reserva de estoque");
+
+        return newStock;
     }
 
     //* Cancela a reserva do estoque para um produto específico
-    public void releaseStock(String skuCode, int quantity) {
+    public Stock releaseStock(String skuCode, int quantity) {
         Stock stock = getStockOrThrow(skuCode);
-        validateQuantity(stock.getQuantity_reserved(), quantity, skuCode, "reservada");
+        validateQuantity(stock.getQuantityReserved(), quantity, skuCode, "reservada");
 
-        stock.setQuantity_reserved(stock.getQuantity_reserved() - quantity);
-        stock.setQuantity_available(stock.getQuantity_available() + quantity);
+        stock.setQuantityReserved(stock.getQuantityReserved() - quantity);
+        stock.setQuantityAvailable(stock.getQuantityAvailable() + quantity);
 
-        stockRepository.save(stock);
+        Stock newStock = stockRepository.save(stock);
         recordMovement(skuCode, MovementType.CANCELED, quantity, "Liberação de estoque");
+
+        return newStock;
     }
 
     //* Valida se existe produto com aquele skuCode
