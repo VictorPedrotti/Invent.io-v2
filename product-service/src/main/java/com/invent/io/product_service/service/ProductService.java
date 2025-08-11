@@ -40,6 +40,7 @@ public class ProductService {
     
     Product product = getProductbyId(id);
     product.setDeletedAt(LocalDateTime.now());
+    product.setActive(false);
     productRepository.save(product);
   }
 
@@ -54,7 +55,8 @@ public class ProductService {
           product.setWeight(requestDto.weight());
           product.setDimensions(requestDto.dimensions());
           product.setImageUrl(requestDto.imageUrl());
-          product.setActive(requestDto.isActive());
+          product.setActive(true);
+          product.setDeletedAt(null);
           return productRepository.save(product);
         })
         .orElseThrow(() -> new RuntimeException("Produto não encontrado com id: " + id));

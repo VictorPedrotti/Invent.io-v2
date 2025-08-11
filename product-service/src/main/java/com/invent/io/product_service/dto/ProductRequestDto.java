@@ -37,9 +37,8 @@ public record ProductRequestDto(
 
   @Size(max = 255, message = "URL da imagem não pode exceder 255 caracteres")
   @NotBlank(message = "URL da imagem é obrigatória")
-  String imageUrl,
-
-  boolean isActive
+  String imageUrl
+  
 ) {
 
   public Product toEntity() {
@@ -52,7 +51,7 @@ public record ProductRequestDto(
     product.setWeight(weight);
     product.setDimensions(dimensions);
     product.setImageUrl(imageUrl);
-    product.setActive(isActive);
+    product.setActive(true);
     return product;
   }
 
