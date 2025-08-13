@@ -24,7 +24,7 @@ public class SupplierService {
         .toList();
   }
 
-  public Supplier getSupplerById(Long id) {
+  public Supplier getSupplierById(Long id) {
     return supplierRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Fornecedor não encontrado com id: " + id));
   }
@@ -38,7 +38,7 @@ public class SupplierService {
       throw new RuntimeException("Fornecedor não encontrado com id: " + id);
     }
 
-    Supplier supplier = getSupplerById(id);
+    Supplier supplier = getSupplierById(id);
     supplier.setDeletedAt(LocalDateTime.now());
     supplier.setActive(false);
     supplierRepository.save(supplier);
