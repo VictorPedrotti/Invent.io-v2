@@ -9,7 +9,7 @@ import com.invent.io.procurement_service.model.Purchase;
 
 public record PurchaseResponseDto(
     Long id,
-    Integer supplierId,
+    Long supplierId,
     BigDecimal totalAmount,
     PurchaseStatus status,
     LocalDateTime purchaseDate,

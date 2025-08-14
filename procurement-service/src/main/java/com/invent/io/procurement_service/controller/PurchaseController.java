@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.invent.io.procurement_service.dto.PurchaseRequestDto;
 import com.invent.io.procurement_service.dto.PurchaseResponseDto;
-import com.invent.io.procurement_service.enums.PurchaseStatus;
+import com.invent.io.procurement_service.dto.UpdatePurchaseStatusDto;
 import com.invent.io.procurement_service.service.PurchaseService;
 
 import jakarta.validation.Valid;
@@ -33,7 +33,7 @@ public class PurchaseController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<PurchaseResponseDto> getPurchaseById(Long id) {
+  public ResponseEntity<PurchaseResponseDto> getPurchaseById(@PathVariable Long id) {
     return ResponseEntity.ok(PurchaseResponseDto.from(purchaseService.getPurchaseById(id)));
   }
 
@@ -43,7 +43,7 @@ public class PurchaseController {
   }
 
   @PutMapping("/{id}/status")
-  public ResponseEntity<PurchaseResponseDto> updatePurchaseStatus(@PathVariable Long id, @RequestBody PurchaseStatus status) {
-    return ResponseEntity.ok(PurchaseResponseDto.from(purchaseService.updatePurchaseStatus(id, status))); 
+  public ResponseEntity<PurchaseResponseDto> updatePurchaseStatus(@PathVariable Long id, @RequestBody UpdatePurchaseStatusDto dto) {
+    return ResponseEntity.ok(PurchaseResponseDto.from(purchaseService.updatePurchaseStatus(id, dto.status()))); 
   }
 }

@@ -7,6 +7,7 @@ import com.invent.io.procurement_service.model.Supplier;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -39,8 +40,7 @@ public record SupplierRequestDto(
   @Size(max = 100, message = "Cidade deve ter no máximo 100 caracteres")
   String city,
 
-  @NotBlank(message = "Estado é obrigatório")
-  @Size(min = 2, max = 2, message = "Estado deve ter exatamente 2 caracteres")
+  @NotNull(message = "Estado é obrigatório")
   States state,
   
   @NotBlank(message = "CEP é obrigatório")

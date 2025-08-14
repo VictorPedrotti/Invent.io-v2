@@ -11,8 +11,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record PurchaseItemRequestDto(
-  @NotNull(message = "ID do produto é obrigatório")
-  Integer productId,
+  @NotBlank(message = "ID do produto é obrigatório")
+  String productId,
 
   @NotNull(message = "Quantidade é obrigatória")
   @Positive(message = "Quantidade deve ser positiva")

@@ -3,14 +3,17 @@ package com.invent.io.procurement_service.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.invent.io.procurement_service.dto.PurchaseCompletedEventDto;
 import com.invent.io.procurement_service.dto.PurchaseRequestDto;
 import com.invent.io.procurement_service.dto.PurchaseResponseDto;
 import com.invent.io.procurement_service.enums.PurchaseStatus;
 import com.invent.io.procurement_service.model.Purchase;
 import com.invent.io.procurement_service.model.PurchaseItem;
+import com.invent.io.procurement_service.producer.PurchaseProducer;
 import com.invent.io.procurement_service.repository.PurchaseRepository;
 
 import jakarta.transaction.Transactional;
@@ -19,8 +22,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class PurchaseService {
-  
+
   private final PurchaseRepository purchaseRepository;
+  private final PurchaseProducer purchaseProducer;
 
   @Transactional
   public Purchase createPurchase(PurchaseRequestDto requestDto) {
@@ -33,7 +37,7 @@ public class PurchaseService {
           PurchaseItem item = itemDto.toEntity();
           item.setPurchase(purchase);
           item.setTotalPrice(item.getPricePerUnit().multiply(BigDecimal.valueOf(item.getQuantity())));
-          return item;  
+          return item;
         }).toList();
 
     purchase.setItems(items);
@@ -56,15 +60,43 @@ public class PurchaseService {
         .orElseThrow(() -> new RuntimeException("Compra não encontrada com id: " + id));
   }
 
+  @Transactional
   public Purchase updatePurchaseStatus(Long id, PurchaseStatus status) {
-    return purchaseRepository.findById(id)
-        .map(purchase -> {
-          if (purchase.getStatus() == PurchaseStatus.COMPLETED) {
-            throw new RuntimeException("Compra já concluída e não pode ser atualizada");
-          }
-          purchase.setStatus(status);
-          return purchaseRepository.save(purchase);
-        })
+    Purchase purchase = purchaseRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Compra não encontrada com id: " + id));
+
+    Set<PurchaseStatus> lockedStatuses = Set.of(PurchaseStatus.COMPLETED, PurchaseStatus.CANCELLED);
+
+    if (lockedStatuses.contains(purchase.getStatus())) {
+      throw new RuntimeException("Não é possível alterar o status da compra já finalizada ou cancelada.");
+    }
+
+    purchase.setStatus(status);
+
+    if (status == PurchaseStatus.COMPLETED) {
+      purchase.setReceivedAt(LocalDateTime.now());
+    }
+
+    Purchase savedPurchase = purchaseRepository.save(purchase);
+
+    if (status == PurchaseStatus.COMPLETED) {
+      try {
+        List<PurchaseCompletedEventDto.Item> items = savedPurchase.getItems().stream()
+            .map(item -> new PurchaseCompletedEventDto.Item(
+                item.getProductId(),
+                item.getQuantity()))
+            .toList();
+
+        PurchaseCompletedEventDto eventDto = new PurchaseCompletedEventDto(
+            savedPurchase.getId(),
+            items);
+
+        purchaseProducer.sendPurchaseMessage(eventDto);
+      } catch (Exception e) {
+        throw new RuntimeException("Falha ao enviar mensagem para a fila", e);
+      }
+    }
+    return savedPurchase;
   }
-} 
+
+}

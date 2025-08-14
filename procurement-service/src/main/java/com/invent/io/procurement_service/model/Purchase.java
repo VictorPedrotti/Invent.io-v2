@@ -10,6 +10,8 @@ import com.invent.io.procurement_service.enums.PurchaseStatus;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,9 +34,12 @@ public class Purchase {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Integer supplierId;
+  private Long supplierId;
   private BigDecimal totalAmount;
+
+  @Enumerated(EnumType.STRING)
   private PurchaseStatus status; 
+  
   private LocalDateTime purchaseDate;
   private LocalDateTime receivedAt;
 

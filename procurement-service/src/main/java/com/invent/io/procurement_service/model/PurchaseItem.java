@@ -2,7 +2,6 @@ package com.invent.io.procurement_service.model;
 
 import java.math.BigDecimal;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,12 +30,10 @@ public class PurchaseItem {
   @JoinColumn(name = "purchase_id", nullable = false)
   private Purchase purchase;
 
-  private Integer productId;
+  private String productId;
   private Integer quantity;
   private BigDecimal pricePerUnit;
   private BigDecimal totalPrice;
-
-  @Column(unique = true)
   private String skuCode;
 
 }

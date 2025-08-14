@@ -6,7 +6,7 @@ import com.invent.io.procurement_service.model.PurchaseItem;
 
 public record PurchaseItemResponseDto(
     Long id,
-    Integer productId,
+    String productId,
     Integer quantity,
     BigDecimal pricerPerUnit,
     BigDecimal totalPrice,

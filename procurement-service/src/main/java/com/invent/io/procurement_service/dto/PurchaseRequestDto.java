@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record PurchaseRequestDto(
   @NotNull(message = "ID do fornecedor é obrigatório")
-  Integer supplierId,
+  Long supplierId,
 
   @Valid
   List<PurchaseItemRequestDto> items
@@ -17,6 +17,7 @@ public record PurchaseRequestDto(
 
   public Purchase toEntity() {
     Purchase purchase = new Purchase();
+    purchase.setSupplierId(supplierId);
     return purchase;
   }
 }
