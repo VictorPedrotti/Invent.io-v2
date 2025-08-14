@@ -23,6 +23,9 @@ public class Routes {
   @Value("${stock.service.url}")
   private String stockServiceUrl;
 
+  @Value("${procurement.service.url}")
+  private String procurementServiceUrl;
+
   @Bean
   public RouterFunction<ServerResponse> productServiceRoute() {
     return GatewayRouterFunctions.route("product_service")
@@ -43,6 +46,14 @@ public class Routes {
     return GatewayRouterFunctions.route("stock_service")
               .route(RequestPredicates.path("/api/v1/stocks/**"), HandlerFunctions.http(URI.create(stockServiceUrl)))
               .route(RequestPredicates.path("/api/v1/stock-movements/**"), HandlerFunctions.http(URI.create(stockServiceUrl)))
+              .build();
+  }
+
+  @Bean
+  public RouterFunction<ServerResponse> procurementServiceRoute() {
+    return GatewayRouterFunctions.route("stock_service")
+              .route(RequestPredicates.path("/api/v1/suppliers/**"), HandlerFunctions.http(URI.create(procurementServiceUrl)))
+              .route(RequestPredicates.path("/api/v1/purchases/**"), HandlerFunctions.http(URI.create(procurementServiceUrl)))
               .build();
   }
 
