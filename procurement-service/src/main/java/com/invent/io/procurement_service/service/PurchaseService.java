@@ -83,7 +83,7 @@ public class PurchaseService {
       try {
         List<PurchaseCompletedEventDto.Item> items = savedPurchase.getItems().stream()
             .map(item -> new PurchaseCompletedEventDto.Item(
-                item.getProductId(),
+                item.getSkuCode(),
                 item.getQuantity()))
             .toList();
 

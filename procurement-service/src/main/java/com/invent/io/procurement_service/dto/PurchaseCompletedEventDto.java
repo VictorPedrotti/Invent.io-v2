@@ -6,5 +6,5 @@ public record PurchaseCompletedEventDto(
   Long purchaseId,
   List<Item> items
 ) {
-  public record Item(String productId, Integer quantity) {}
+  public record Item(String skuCode, Integer quantity) {}
 }
