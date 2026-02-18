@@ -10,6 +10,8 @@
         <file>./logs/api-gateway.log</file>  
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <customFields>{"service":"api-gateway"}</customFields>  
+            <includeMdcKeyName>trace_id</includeMdcKeyName>
+            <includeMdcKeyName>span_id</includeMdcKeyName>
         </encoder>
     </appender>
 

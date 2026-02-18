@@ -9,7 +9,9 @@
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>./logs/cart-service.log</file>  
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"service":"cart-service"}</customFields>  
+            <customFields>{"service":"cart-service"}</customFields>
+            <includeMdcKeyName>trace_id</includeMdcKeyName>
+            <includeMdcKeyName>span_id</includeMdcKeyName>  
         </encoder>
     </appender>
 

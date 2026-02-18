@@ -12,6 +12,8 @@
         <file>./logs/product-service.log</file>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <customFields>{"service":"product-service"}</customFields>
+            <includeMdcKeyName>trace_id</includeMdcKeyName>
+            <includeMdcKeyName>span_id</includeMdcKeyName>
         </encoder>
     </appender>
 
