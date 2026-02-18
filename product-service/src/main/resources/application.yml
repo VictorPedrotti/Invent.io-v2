@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: product-service
+
+# ===== ACTUATOR - Métricas =====
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+      base-path: /actuator
+  prometheus:
+    metrics:
+      export:
+        enabled: true  # ← Caminho atualizado
+  metrics:
+    tags:
+      service: product-service
+
+# ===== LOGGING =====
+logging:
+  level:
+    root: INFO
+    "[com.invent.io]": DEBUG  # ← Simplifiquei (pega todos os pacotes com.invent.io.*)
+  file:
+    name: ./logs/product-service.log
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

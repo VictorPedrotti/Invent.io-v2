@@ -1,0 +1,90 @@
+# ====================================================================
+# PROMETHEUS CONFIG - Metrics Collection & Storage
+# ====================================================================
+# O QUE ESTÁ CONFIGURADO AQUI:
+# 1. Faz scrape (busca) métricas dos serviços a cada 15s
+# 2. Armazena séries temporais
+# 3. Permite queries de agregação
+# ====================================================================
+
+global:
+  scrape_interval: 15s      # Coleta métricas a cada 15 segundos
+  evaluation_interval: 15s  # Avalia regras de alerta a cada 15s
+  scrape_timeout: 10s       # Timeout de 10s por scrape
+
+# Configuração de alertas (adicionar depois se quiser)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Regras de alerta (adicionar depois se quiser)
+rule_files:
+  # - "alerts/*.yml"
+
+# ====================================================================
+# JOBS DE COLETA - Onde buscar métricas
+# ====================================================================
+scrape_configs:
+  
+  # ============================================================
+  # PROMETHEUS - Métricas do próprio Prometheus
+  # ============================================================
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # ============================================================
+  # API GATEWAY - Porta 9000 (ajuste se for diferente)
+  # ============================================================
+  - job_name: 'api-gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:9000']  # Ajuste a porta
+    relabel_configs:
+      - target_label: 'service'
+        replacement: 'api-gateway'
+
+  # ============================================================
+  # PRODUCT SERVICE
+  # ============================================================
+  - job_name: 'product-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080']  # Ajuste a porta
+    relabel_configs:
+      - target_label: 'service'
+        replacement: 'product-service'
+
+  # ============================================================
+  # CART SERVICE
+  # ============================================================
+  - job_name: 'cart-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8081']  # Ajuste a porta
+    relabel_configs:
+      - target_label: 'service'
+        replacement: 'cart-service'
+
+  # ============================================================
+  # STOCK SERVICE
+  # ============================================================
+  - job_name: 'stock-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8082']  # Ajuste a porta
+    relabel_configs:
+      - target_label: 'service'
+        replacement: 'stock-service'
+
+  # ============================================================
+  # PROCUREMENT SERVICE
+  # ============================================================
+  - job_name: 'procurement-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8083']  # Ajuste a porta
+    relabel_configs:
+      - target_label: 'service'
+        replacement: 'procurement-service'

@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: cart-service
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      service: cart-service 
+
+logging:
+  level:
+    root: INFO
+    "[com.invent.io]": DEBUG
+  file:
+    name: ./logs/cart-service.log  
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

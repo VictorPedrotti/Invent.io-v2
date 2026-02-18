@@ -1,0 +1,48 @@
+# ====================================================================
+# TEMPO CONFIG - Distributed Tracing Storage
+# ====================================================================
+# O QUE ESTÁ CONFIGURADO AQUI:
+# 1. Recebe traces via OTLP (protocolo padrão OpenTelemetry)
+# 2. Armazena localmente em disco
+# 3. Permite queries do Grafana
+# ====================================================================
+
+server:
+  http_listen_port: 3200
+
+# Onde o Tempo recebe traces dos seus serviços
+distributor:
+  receivers:
+    # OTLP é o protocolo que o OpenTelemetry Java Agent usa
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+
+# Como armazena os traces
+storage:
+  trace:
+    backend: local
+    local:
+      path: /tmp/tempo/traces
+    # Configurações de retenção
+    wal:
+      path: /tmp/tempo/wal
+    pool:
+      max_workers: 100
+      queue_depth: 10000
+
+# Permite queries no Grafana
+query_frontend:
+  search:
+    max_duration: 0s  # sem limite de duração de trace
+
+# Configurações de performance
+ingester:
+  max_block_duration: 5m
+
+compactor:
+  compaction:
+    block_retention: 48h  # mantém traces por 48 horas

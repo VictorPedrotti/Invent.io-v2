@@ -1,0 +1,85 @@
+# ====================================================================
+# GRAFANA DATASOURCES - Conecta as 3 ferramentas
+# ====================================================================
+# O QUE ESTÁ CONFIGURADO AQUI:
+# Grafana vai consultar:
+# - Loki para logs
+# - Tempo para traces
+# - Prometheus para métricas
+# ====================================================================
+
+apiVersion: 1
+
+datasources:
+  # ============================================================
+  # LOKI - Logs
+  # ============================================================
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    isDefault: false
+    editable: true
+    jsonData:
+      maxLines: 1000
+      # Correlação: de um trace_id no log, pula pro Tempo
+      derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: "trace_id=(\\w+)"
+          name: TraceID
+          url: '$${__value.raw}'
+
+  # ============================================================
+  # TEMPO - Traces
+  # ============================================================
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200
+    uid: tempo
+    isDefault: false
+    editable: true
+    jsonData:
+      tracesToLogs:
+        # Correlação: de um trace, pula pros logs do Loki
+        datasourceUid: 'loki'
+        tags: ['service']
+        spanStartTimeShift: '-1h'
+        spanEndTimeShift: '1h'
+        filterByTraceID: true
+      tracesToMetrics:
+        # Correlação: de um trace, pula pras métricas do Prometheus
+        datasourceUid: 'prometheus'
+      serviceMap:
+        datasourceUid: 'prometheus'
+      nodeGraph:
+        enabled: true
+
+  # ============================================================
+  # PROMETHEUS - Métricas
+  # ============================================================
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    uid: prometheus
+    isDefault: true
+    editable: true
+    jsonData:
+      httpMethod: POST
+      # Correlação: de uma métrica, pula pros traces do Tempo
+      exemplarTraceIdDestinations:
+        - name: trace_id
+          datasourceUid: tempo
+
+# ====================================================================
+# MAGIA DA CORRELAÇÃO:
+# 
+# 1. Você vê latência alta no Prometheus dashboard
+# 2. Clica numa métrica → pula pro Tempo ver o trace
+# 3. No trace, vê que stock-service demorou
+# 4. Clica no span do stock-service → pula pro Loki ver os logs
+# 5. Nos logs, vê o erro exato que aconteceu
+# 
+# TUDO CONECTADO! 🔥
+# ====================================================================

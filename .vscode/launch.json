@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "java",
+        "name": "API Gateway (COM AGENT)",
+        "request": "launch",
+        "mainClass": "com.invent.io.api_gateway.ApiGatewayApplication",
+        "projectName": "api-gateway",
+        "vmArgs": "-javaagent:\"C:/Projetos Java/Projetos/Invent.io/docker/otel/opentelemetry-javaagent.jar\" -Dotel.service.name=api-gateway -Dotel.traces.exporter=otlp -Dotel.exporter.otlp.endpoint=http://localhost:4317 -Dotel.exporter.otlp.protocol=grpc -Dotel.metrics.exporter=none -Dotel.logs.exporter=none"
+      },
+      {
+        "type": "java",
+        "name": "Product Service (COM AGENT)",
+        "request": "launch",
+        "mainClass": "com.invent.io.product_service.ProductServiceApplication",
+        "projectName": "product-service",
+        "vmArgs": "-javaagent:\"C:/Projetos Java/Projetos/Invent.io/docker/otel/opentelemetry-javaagent.jar\" -Dotel.service.name=product-service -Dotel.traces.exporter=otlp -Dotel.exporter.otlp.endpoint=http://localhost:4317 -Dotel.exporter.otlp.protocol=grpc -Dotel.metrics.exporter=none -Dotel.logs.exporter=none"
+      },
+      {
+        "type": "java",
+        "name": "Cart Service (COM AGENT)",
+        "request": "launch",
+        "mainClass": "com.invent.io.cart_service.CartServiceApplication",
+        "projectName": "cart-service",
+        "vmArgs": "-javaagent:\"C:/Projetos Java/Projetos/Invent.io/docker/otel/opentelemetry-javaagent.jar\" -Dotel.service.name=cart-service -Dotel.traces.exporter=otlp -Dotel.exporter.otlp.endpoint=http://localhost:4317 -Dotel.exporter.otlp.protocol=grpc -Dotel.metrics.exporter=none -Dotel.logs.exporter=none"
+      },
+      {
+        "type": "java",
+        "name": "Stock Service (COM AGENT)",
+        "request": "launch",
+        "mainClass": "com.invent.io.stock_service.StockServiceApplication",
+        "projectName": "stock-service",
+        "vmArgs": "-javaagent:\"C:/Projetos Java/Projetos/Invent.io/docker/otel/opentelemetry-javaagent.jar\" -Dotel.service.name=stock-service -Dotel.traces.exporter=otlp -Dotel.exporter.otlp.endpoint=http://localhost:4317 -Dotel.exporter.otlp.protocol=grpc -Dotel.metrics.exporter=none -Dotel.logs.exporter=none"
+      },
+      {
+        "type": "java",
+        "name": "Procurement Service (COM AGENT)",
+        "request": "launch",
+        "mainClass": "com.invent.io.procurement_service.ProcurementServiceApplication",
+        "projectName": "procurement-service",
+        "vmArgs": "-javaagent:\"C:/Projetos Java/Projetos/Invent.io/docker/otel/opentelemetry-javaagent.jar\" -Dotel.service.name=procurement-service -Dotel.traces.exporter=otlp -Dotel.exporter.otlp.endpoint=http://localhost:4317 -Dotel.exporter.otlp.protocol=grpc -Dotel.metrics.exporter=none -Dotel.logs.exporter=none"
+      }
+    ]
+}

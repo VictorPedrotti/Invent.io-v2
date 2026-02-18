@@ -13,7 +13,7 @@ services:
 
   keycloak:
     container_name: keycloak
-    image: quay.io/keycloak/keycloak:24.0.1
+    image: quay.io/keycloak/keycloak:26.0.2
     command: [ "start-dev" ]
     environment:
       DB_VENDOR: MYSQL
@@ -153,6 +153,94 @@ services:
       - cart-redis-data:/data 
     restart: unless-stopped
 
+  # ============================================================
+  # TEMPO - Distributed Tracing
+  # ============================================================
+  tempo:
+    image: grafana/tempo:2.3.1
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./observability/tempo/tempo.yaml:/etc/tempo.yaml
+      - tempo-data:/tmp/tempo
+    ports:
+      - "3200:3200"   # Grafana consulta aqui
+      - "4317:4317"   # Seus serviços Java enviam traces aqui (gRPC)
+      - "4318:4318"   # Alternativa HTTP
+    restart: unless-stopped
+
+  # ============================================================
+  # LOKI - Log Aggregation
+  # ============================================================
+  loki:
+    image: grafana/loki:2.9.3
+    container_name: loki
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./observability/loki/loki.yaml:/etc/loki/local-config.yaml
+      - loki-data:/loki
+    ports:
+      - "3100:3100"   # Grafana e Promtail acessam aqui
+    restart: unless-stopped
+
+  # ============================================================
+  # PROMTAIL - Log Collector
+  # ============================================================
+  promtail:
+    image: grafana/promtail:2.9.3
+    container_name: promtail
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./observability/promtail/promtail.yaml:/etc/promtail/config.yml
+      # Monta pasta de logs dos seus serviços (vamos configurar depois)
+      - ./logs:/var/log/apps:ro
+    depends_on:
+      - loki
+    restart: unless-stopped
+
+  # ============================================================
+  # PROMETHEUS - Metrics Collection
+  # ============================================================
+  prometheus:
+    image: prom/prometheus:v2.48.1
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"   # UI do Prometheus (opcional acessar)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped  
+
+  # ============================================================
+  # GRAFANA - Visualization
+  # ============================================================
+  grafana:
+    image: grafana/grafana:10.2.3
+    container_name: grafana
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
+    volumes:
+      - ./observability/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./observability/grafana/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - loki
+      - tempo
+      - prometheus
+    restart: unless-stopped
+
 volumes:
   keycloak-db-data:
   user-db-data:
@@ -163,4 +251,8 @@ volumes:
   payment-db-data:
   notification-db-data:
   product-mongodb-data:
-  cart-redis-data: 
+  cart-redis-data:
+  tempo-data:
+  loki-data:
+  prometheus-data:
+  grafana-data:
